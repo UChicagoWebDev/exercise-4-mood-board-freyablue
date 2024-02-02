@@ -1,3 +1,4 @@
+//mood.js
 const bing_api_endpoint = "https://api.bing.microsoft.com/v7.0/images/search";
 const bing_api_key = BING_API_KEY
 
@@ -9,13 +10,17 @@ function runSearch() {
 
   // TODO: Build your query by combining the bing_api_endpoint and a query attribute
   //  named 'q' that takes the value from the search bar input field.
+  const query = document.querySelector(".search input").value;
 
   let request = new XMLHttpRequest();
 
   // TODO: Construct the request object and add appropriate event listeners to
   // handle responses. See:
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API/Using_XMLHttpRequest
-  //
+  request.open();
+  request.setRequestHeader("",bing_api_key);
+  request.responseType = "json";
+
   //   - You'll want to specify that you want json as your response type
   //   - Look for your data in event.target.response
   //   - When adding headers, also include the commented out line below. See the API docs at:
