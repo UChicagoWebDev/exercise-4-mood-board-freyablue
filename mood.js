@@ -8,7 +8,7 @@ function runSearch() {
 
   // TODO: Clear the results pane before you run a new search
 
-  openResultsPane();
+  clearResultsPane();
 
   // TODO: Build your query by combining the bing_api_endpoint and a query attribute
   //  named 'q' that takes the value from the search bar input field.
@@ -19,7 +19,7 @@ function runSearch() {
   // TODO: Construct the request object and add appropriate event listeners to
   // handle responses. See:
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API/Using_XMLHttpRequest
-  request.open("GET", "${bing_api_endpoint}?q=${query}", true);
+  request.open("GET", `${bing_api_endpoint}?q=${encodeURIComponent(query)}`);
   request.setRequestHeader("Ocp-Apim-Subscription-Key",bing_api_key);
     //   - You'll want to specify that you want json as your response type
   request.responseType = "json";
@@ -38,7 +38,9 @@ function runSearch() {
 
   request.onload = function (){
     if (request.status==200){ //ok
-      displayResults(request.response.value);
+      const res = request.response.value;
+      displayImages(res);
+      
     } else{
       console.error("Error", request.statusText);
     }
@@ -57,7 +59,7 @@ function clearResultsPane() {
   resultsImageContainer.innerHTML = "";
 }
 
-function displayResults(results) {
+function displayImages(results) {
   const resultsImageContainer = document.querySelector("#resultsImageContainer");
 
   // TODO: Loop through the results and add them to the DOM
