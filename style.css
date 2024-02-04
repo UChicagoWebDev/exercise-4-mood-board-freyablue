@@ -3,6 +3,10 @@ body {
   min-width: 600px;
   margin: 20px auto 0 auto;
   font-family: 'Open Sans', sans-serif;
+  display: grid;
+  background-color: #dde5e9;
+  grid-template-rows:auto 1fr;
+  gap:20px;
 }
 
 .top_bar {
@@ -37,6 +41,11 @@ h1 {
   flex-shrink: 0;
   flex-grow: 1;
 }
+
+/* .search {
+  display: flex;
+  gap: 10px;
+} */
 
 .search input, .search button{
   font-size: 20px;

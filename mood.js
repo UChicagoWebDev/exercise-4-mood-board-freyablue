@@ -13,13 +13,13 @@ function runSearch() {
   // TODO: Build your query by combining the bing_api_endpoint and a query attribute
   //  named 'q' that takes the value from the search bar input field.
   const query = document.querySelector(".search input").value;
-
-  let request = new XMLHttpRequest();
-
   // TODO: Construct the request object and add appropriate event listeners to
   // handle responses. See:
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API/Using_XMLHttpRequest
-  request.open("GET", `${bing_api_endpoint}?q=${encodeURIComponent(query)}`);
+  let request = new XMLHttpRequest();
+
+  
+  request.open("GET", `${bing_api_endpoint}?q=${query}`,true);
   request.setRequestHeader("Ocp-Apim-Subscription-Key",bing_api_key);
     //   - You'll want to specify that you want json as your response type
   request.responseType = "json";
@@ -34,12 +34,11 @@ function runSearch() {
   //
   // request.setRequestHeader("Ocp-Apim-Subscription-Key", bing_api_key);
 
-  
-
   request.onload = function (){
     if (request.status==200){ //ok
       const res = request.response.value;
       displayImages(res);
+      displayRelatedConcepts(request.response.relatedSearches);
       
     } else{
       console.error("Error", request.statusText);
@@ -54,15 +53,18 @@ function runSearch() {
 }
 
 function clearResultsPane() {
-  // TODO: Clear the results pane
+  //Clear the results pane
   const resultsImageContainer = document.querySelector("#resultsImageContainer");
+  const suggestUL = document.querySelector(".suggestions ul");
   resultsImageContainer.innerHTML = "";
+  suggestUL.innerHTML = "";
+  closeResultsPane();
 }
 
 function displayImages(results) {
   const resultsImageContainer = document.querySelector("#resultsImageContainer");
 
-  // TODO: Loop through the results and add them to the DOM
+  // Loop through the results and add them to the DOM
   results.forEach((result) => {
     const resultImage = document.createElement("div");
     resultImage.classList.add("resultImage");
@@ -76,21 +78,43 @@ function displayImages(results) {
     // TODO: Add event listeners to the images
     image.addEventListener("click", function () {
       addImageToBoard(result.contentUrl);
+      // addImageToBoard(result);
     });
   });
 
   openResultsPane();
 }
 
-function addImageToBoard(imageUrl) {
-  // TODO: Implement adding the selected image to the user's mood board
-  const board = document.querySelector("#board");
+function displayRelatedConcepts(relatedSearches) {
+  const suggestionsContainer = document.querySelector(".suggestions ul");
+  suggestionsContainer.innerHTML = "";
 
+  relatedSearches.forEach((suggestion) => {
+    const liElement = document.createElement("li");
+    liElement.textContent = suggestion.displayText;
+    //liElement.addEventListener("click", () => runSearchWithSuggestion(suggestion));
+
+    liElement.addEventListener("click", () => runSearchWithSuggestion(suggestion.text));
+
+    suggestionsContainer.appendChild(liElement);
+  });
+}
+
+function runSearchWithSuggestion(suggestion) {
+  document.querySelector(".search input").value = suggestion;
+  runSearch();
+}
+
+function addImageToBoard(imageUrl) {
+  // Implement adding the selected image to the user's mood board
+  const board = document.querySelector("#board");
   const savedImage = document.createElement("div");
+
   savedImage.classList.add("savedImage");
 
   const image = document.createElement("img");
   image.src = imageUrl;
+  //image.src = imageUrl.thumbnailUrl;
 
   savedImage.appendChild(image);
   board.appendChild(savedImage);
